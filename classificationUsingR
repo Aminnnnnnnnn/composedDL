@@ -1,0 +1,241 @@
+# Clear environment
+rm(list = ls())
+
+# Load packages
+library(usethis)
+library(devtools)
+library(tensorflow)
+library(keras)
+library(imager)
+
+# Gender Classification
+# Read Images 
+pics.train1 <- list.files(path = "C:/Users/Amin/Desktop/gender/train", pattern = "*.jpg", full.names = TRUE)
+mypics.train1 <- list()
+for (i in 1:1599) {
+  mypics.train1[[i]] <- load.image(pics.train1[[i]])
+}
+
+pics.test1 <- list.files(path = "C:/Users/Amin/Desktop/gender/test", pattern = "*.jpg", full.names = TRUE)
+mypics.test1 <- list()
+for (i in 1:399) {
+  mypics.test1[[i]] <- load.image(pics.test1[[i]])
+}
+
+# Resize Images
+for (i in 1:1599) {
+  mypics.train1[[i]] <- resize(mypics.train1[[i]], 28, 28)
+}
+for (i in 1:399) {
+  mypics.test1[[i]] <- resize(mypics.test1[[i]], 28, 28)
+}
+
+# Train
+trainx1 <- NULL
+for (i in 1:1599) {
+  trainx1 <- rbind(trainx1, mypics.train1[[i]])
+}
+testx1 <- NULL
+for (i in 1:399) {
+  testx1 <- rbind(testx1, mypics.test1[[i]])
+}
+
+
+# Read train and test labels
+data.train1 <- read.csv("C:/Users/Amin/Desktop/gender/train/traingender.csv")
+train_y1 <- data.train1[, 2]
+data.test1 <- read.csv("C:/Users/Amin/Desktop/gender/test/testgender.csv")
+test_y1 <- data.test1[, 2]
+
+# One-Hot Encoding
+trainLabels1 <- to_categorical(train_y1)
+testLabels1 <- to_categorical(test_y1)
+
+
+# Model
+model1 <- keras_model_sequential()
+model1 %>%
+  layer_dense(units = 256, activation = 'relu', input_shape = c(2352)) %>%
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+# compile model
+model1 %>%
+  compile(
+    loss = 'binary_crossentropy',
+    optimizer = optimizer_rmsprop(),
+    metrics = c('accuracy')
+  )
+
+# Fit model
+history <- model1 %>%
+  fit(trainx1, trainLabels1, epochs = 64, batch_size = 32)
+
+# Cat or Dog Classification
+# Read Images
+pics.train2 <- list.files(path = "C:/Users/Amin/Desktop/catordog/train", pattern = "*.jpg", full.names = TRUE)
+mypics.train2 <- list()
+for (i in 1:1599) {
+  mypics.train2[[i]] <- load.image(pics.train2[[i]])
+}
+
+pics.test2 <- list.files(path = "C:/Users/Amin/Desktop/catordog/train", pattern = "*.jpg", full.names = TRUE)
+mypics.test2 <- list()
+for (i in 1:399) {
+  mypics.test2[[i]] <- load.image(pics.test2[[i]])
+}
+
+# Resize Images
+for (i in 1:1599) {
+  mypics.train2[[i]] <- resize(mypics.train2[[i]], 28, 28)
+}
+for (i in 1:399) {
+  mypics.test2[[i]] <- resize(mypics.test2[[i]], 28, 28)
+}
+
+# Train
+trainx2 <- NULL
+for (i in 1:1599) {
+  trainx2 <- rbind(trainx2, mypics.train2[[i]])
+}
+testx2 <- NULL
+for (i in 1:399) {
+  testx2 <- rbind(testx2, mypics.test2[[i]])
+}
+
+data.train2 <- read.csv("C:/Users/Amin/Desktop/catordog/train/traincatordog.csv")
+train_y2 <- data.train2[, 2]
+
+# Test
+data.test2 <- read.csv("C:/Users/Amin/Desktop/catordog/test/testcatordog.csv")
+test_y2 <- data.test2[, 2]
+
+# One-Hot Encoding
+trainLabels2 <- to_categorical(train_y2)
+testLabels2 <- to_categorical(test_y2)
+
+# Model
+model2 <- keras_model_sequential()
+model2 %>%
+  layer_dense(units = 256, activation = 'relu', input_shape = c(2352)) %>%
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+summary(model2)
+
+# Compile
+model2 %>%
+  compile(loss = 'binary_crossentropy',
+          optimizer = optimizer_rmsprop(),
+          metrics = c('accuracy'))
+
+# Fit model
+history2 <- model2 %>%
+  fit(trainx2, trainLabels2, epochs = 64, batch_size = 32)
+
+# General Classification (Human or Animal)
+# Read Images
+pics.train3 <- list.files(path = "C:/Users/Amin/Desktop/general/train", pattern = "*.jpg", full.names = TRUE)
+mypics.train3 <- list()
+for (i in 1:1599) {
+  mypics.train3[[i]] <- load.image(pics.train3[[i]])
+}
+
+pics.test3 <- list.files(path = "C:/Users/Amin/Desktop/general/test", pattern = "*.jpg", full.names = TRUE)
+mypics.test3 <- list()
+for (i in 1:399) {
+  mypics.test3[[i]] <- load.image(pics.test3[[i]])
+}
+
+# Resize Images
+for (i in 1:1599) {
+  mypics.train3[[i]] <- resize(mypics.train3[[i]], 28, 28)
+}
+for (i in 1:399) {
+  mypics.test3[[i]] <- resize(mypics.test3[[i]], 28, 28)
+}
+
+# Train
+trainx3 <- NULL
+for (i in 1:1599) {
+  trainx3 <- rbind(trainx3, mypics.train3[[i]])
+}
+testx3 <- NULL
+for (i in 1:399) {
+  testx3 <- rbind(testx3, mypics.test3[[i]])
+}
+
+data.train3 <- read.csv("C:/Users/Amin/Desktop/general/train/traingeneral.csv")
+train_y3 <- data.train3[, 2]
+
+# Test
+data.test3 <- read.csv("C:/Users/Amin/Desktop/general/test/testgeneral.csv")
+test_y3 <- data.test3[, 2]
+
+# One-Hot Encoding
+trainLabels3 <- to_categorical(train_y3)
+testLabels3 <- to_categorical(test_y3)
+
+# Model
+model3 <- keras_model_sequential()
+model3 %>%
+  layer_dense(units = 256, activation = 'relu', input_shape = c(2352)) %>%
+  layer_dense(units = 128, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+summary(model3)
+
+# Compile
+model3 %>%
+  compile(loss = 'binary_crossentropy',
+          optimizer = optimizer_rmsprop(),
+          metrics = c('accuracy'))
+
+# Fit model
+history3 <- model3 %>%
+  fit(trainx3, trainLabels3, epochs = 64, batch_size = 32)
+
+# First, ensure that you evaluate and predict on test set, not the training set
+model3_evaluation <- model3 %>% evaluate(testx3, testLabels3)
+pred <- model3 %>% predict(testx3) %>% k_argmax()
+pred <- np_array(pred)
+pred <- reticulate::py_to_r(pred)
+
+#inferences 
+# Prepare datasets for model 1 and 2
+testx1_final <- list()
+testx2_final <- list()
+testy1_final <- list()
+testy2_final <- list()
+
+# compose model1 and model2 based on the output of model3
+# storing the inputs based on the predictions of model 3
+for (i in 1:length(pred)){
+  if (pred[i] == 1){
+    testx1_final <- c(testx1_final, list(mypics.test3[[i]]))
+    testy1_final <- c(testy1_final, list(test_y1[i]))
+  } else {
+    testx2_final <- c(testx2_final, list(mypics.test3[[i]]))
+    testy2_final <- c(testy2_final, list(test_y2[i]))
+  }
+}
+
+# Convert the lists to matrices for prediction
+testx1_final <- do.call(rbind, testx1_final)
+testx2_final <- do.call(rbind, testx2_final)
+testy1_final <- unlist(testy1_final)
+testy2_final <- unlist(testy2_final)
+
+# use model 1 and model 2 for prediction and evaluation
+pred1 <- model1 %>% predict(testx1_final) %>% k_argmax()
+pred2 <- model2 %>% predict(testx2_final) %>% k_argmax()
+
+# Convert numpy arrays to R arrays
+pred1 <- np_array(pred1)
+pred1 <- reticulate::py_to_r(pred1)
+
+pred2 <- np_array(pred2)
+pred2 <- reticulate::py_to_r(pred2)
+
+# compare the predictions with the actual labels
+table(predicted1 = pred1, Actual1 = testy1_final)
+table(predicted2 = pred2, Actual2 = testy2_final)
+
